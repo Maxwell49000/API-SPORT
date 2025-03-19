@@ -21,6 +21,8 @@ class ActiviteController
     }
 
     // Méthode pour récupérer une activité par son ID
+    // Exemple dans le contrôleur
+    // Méthode pour récupérer une activité par son ID
     public function getActivityById($id)
     {
         header("Content-Type: application/json; charset=UTF-8");
@@ -33,12 +35,13 @@ class ActiviteController
 
         $activity = $this->activiteModel->getActivityById($id);
         if ($activity) {
-            echo json_encode($activity->toArray()); // Utilisez toArray() pour obtenir un tableau
+            echo json_encode($activity->toArray()); // Retourne l'activité sous forme de tableau JSON
         } else {
             http_response_code(404); // Not Found
             echo json_encode(['message' => 'Activité non trouvée']);
         }
     }
+
 
     // Méthode pour ajouter une nouvelle activité
     public function addActivity()
@@ -153,10 +156,15 @@ class ActiviteController
     }
 
     // GET /activites?activite=musculation
-    public function getActivitesByCategory($category)
+    public function getActivitesByCategory()
     {
-        $activites = $this->activiteModel->getActivitesByCategory($category); // Filtrer par activité
-        echo json_encode($activites);
+        if (isset($_GET['activite'])) {
+            $category = $_GET['activite'];
+            $activites = $this->activiteModel->getActivitesByCategory($category);
+            echo json_encode($activites);
+        } else {
+            echo json_encode(["error" => "Aucune activité spécifiée"]);
+        }
     }
 
     // GET /activites/stats

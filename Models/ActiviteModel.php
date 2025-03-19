@@ -8,7 +8,9 @@ class ActiviteModel extends DbConnect
     // Récupérer toutes les activités
     public function getAllActivities()
     {
-        $sql = 'SELECT * FROM activite';
+        $sql = 'SELECT activite.*, categorie.nom_categorie 
+            FROM activite
+            JOIN categorie ON activite.id_categorie = categorie.id_categorie';
         $stmt = $this->connection->prepare($sql);
         $stmt->execute();
 
@@ -21,7 +23,7 @@ class ActiviteModel extends DbConnect
     // Ajouter une nouvelle activité
     public function addActivity(Activite $activity)
     {
-        $sql = 'INSERT INTO activite (nom_activite, duree, date_activite, commentaire, Id_categorie) 
+        $sql = 'INSERT INTO activite (nom_activite, duree, date_activite, commentaire, id_categorie) 
                 VALUES (:nom_activite, :duree, :date_activite, :commentaire, :id_categorie)';
 
         $stmt = $this->connection->prepare($sql);
@@ -55,7 +57,7 @@ class ActiviteModel extends DbConnect
     {
         $sql = 'UPDATE activite 
                 SET nom_activite = :nom_activite, duree = :duree, date_activite = :date_activite, 
-                    commentaire = :commentaire, Id_categorie = :id_categorie 
+                    commentaire = :commentaire, id_categorie = :id_categorie 
                 WHERE id_activite = :id_activite';
 
         $stmt = $this->connection->prepare($sql);

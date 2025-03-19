@@ -17,8 +17,6 @@ class Router
             exit;
         }
 
-        // error_log('DEBUG - URI : ' . $_SERVER['REQUEST_URI']);
-
         // Récupère le chemin de base
         $basePath = dirname($_SERVER['SCRIPT_NAME']);
 
@@ -41,8 +39,16 @@ class Router
         array_shift($uriSegments);
 
         // ✅ Déterminer la méthode
-        $this->method = !empty($uriSegments[0]) ? $uriSegments[0] : 'getAllActivities';
+        // ✅ Séparer la méthode des éventuels paramètres GET
+        $methodWithParams = !empty($uriSegments[0]) ? $uriSegments[0] : 'getAllActivities';
+        $this->method = explode('?', $methodWithParams)[0]; // Récupère juste le nom de la méthode
         array_shift($uriSegments);
+
+        // ✅ Si un ID est présent, l'ajouter comme paramètre
+        if (!empty($uriSegments[0]) && is_numeric($uriSegments[0])) {
+            $this->params[] = $uriSegments[0]; // L'ID est passé en paramètre
+            array_shift($uriSegments); // On retire l'ID de l'URI
+        }
 
         // ✅ Inclusion du fichier contrôleur
         $controllerFile = __DIR__ . '/../Controllers/' . $this->controller . '.php';
@@ -71,7 +77,7 @@ class Router
             exit;
         }
 
-        // ✅ Exécuter la méthode demandée
+        // ✅ Exécuter la méthode demandée avec les paramètres (incluant l'ID si présent)
         call_user_func_array([$controller, $this->method], $this->params);
     }
 }
